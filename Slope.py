@@ -5,19 +5,24 @@ import numpy as np
 
 
 def parseFunc(func, x, y):
-    return eval(func, {}, {"x": x, "y": y})
+    return eval(func, {}, {"x": x, "y": y, "sin": np.sin, "cos": np.cos, "e": np.e})
 
 
-def slopeField(func, xmin, xmax, ymin, ymax):
-    if not (type(func) is str or hasattr(func, '__call__')):
-        raise Exception("L")
-    x = np.arange(xmin, xmax)
-    y = np.arange(ymin, ymax)
+def slopeField(func, xmin, xmax, ymin, ymax, density=1):
+
+    x = np.arange(xmin, xmax, 1/density)
+    y = np.arange(ymin, ymax, 1/density)
     X, Y = np.meshgrid(x, y)
-    if hasattr(func, '__call__'):
-        slopes = func(X, Y)
-    else:
+    # if hasattr(func, '__call__'):
+    #     slopes = func(X, Y)
+    # else:
+
+    if not (type(func) is str or hasattr(func, '__call__')):
+        raise Exception("L, bad argument")
+    if type(func) is str:
         slopes = parseFunc(func, X, Y)
+    else:
+        slopes = func(X, Y)
     U = (1 / (1 + slopes ** 2) ** 0.5) * np.ones(X.shape)
     V = (1 / (1 + slopes ** 2) ** 0.5) * slopes
     plt.figure()
@@ -32,10 +37,16 @@ def solutionCurve(func, xinit, yinit, xmin, xmax, ymin, ymax):
     xstep, ystep = (xinit, yinit)
     X = []
     Y = []
+    if not (type(func) is str or hasattr(func, '__call__')):
+        raise Exception("L, bad argument")
+
     for i in range(10000):
         X.append(xstep)
         Y.append(ystep)
-        slope = func(xstep, ystep)
+        if type(func) is str:
+            slope = parseFunc(func, xstep, ystep)
+        else:
+            slope = func(xstep, ystep)
         ystep += slope * 0.01
         xstep += 0.01
         if xstep > xmax or xstep < xmin or ystep > ymax or ystep < ymin:
@@ -43,7 +54,10 @@ def solutionCurve(func, xinit, yinit, xmin, xmax, ymin, ymax):
     for i in range(10000):
         X.append(xstep)
         Y.append(ystep)
-        slope = func(xstep, ystep)
+        if type(func) is str:
+            slope = parseFunc(func, xstep, ystep)
+        else:
+            slope = func(xstep, ystep)
         ystep -= slope * 0.01
         xstep -= 0.01
         if xstep > xmax or xstep < xmin or ystep > ymax or ystep < ymin:
@@ -52,12 +66,14 @@ def solutionCurve(func, xinit, yinit, xmin, xmax, ymin, ymax):
     Y = np.array(Y)
     plt.plot(X, Y)
     plt.grid(True)
-    plt.show()
+
 
 
 def f(x, y):
     return np.e-np.sin(y-x)
 
+g = "sin(x) + e**(1/y)"
 
-slopeField("y*x", -10, 10, -10, 10)
-solutionCurve(f, -3, 1, -10, 10, -10, 10)
+slopeField(g, -10, 10, -10, 10, 1)
+solutionCurve(g, -3, 1, -10, 10, -10, 10)
+plt.show()
