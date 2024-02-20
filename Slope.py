@@ -2,7 +2,6 @@ import math
 
 from matplotlib import pyplot as plt
 import numpy as np
-np.seterr(divide='ignore', invalid='ignore')
 
 
 def parseFunc(func, x, y):
@@ -21,7 +20,7 @@ def parseFunc(func, x, y):
 
 
 def slopeField(func, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength=None):
-
+    np.seterr(divide='ignore', invalid='ignore')
     x = np.arange(xmin, xmax, 1/density)
     y = np.arange(ymin, ymax, 1/density)
     X, Y = np.meshgrid(x, y)
@@ -35,8 +34,6 @@ def slopeField(func, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength
         slopes = parseFunc(func, X, Y)
     else:
         slopes = func(X, Y)
-
-
     U = (1 / (1 + slopes ** 2) ** 0.5) * np.ones(X.shape)
     V = (1 / (1 + slopes ** 2) ** 0.5) * slopes
     plt.figure() #no clue
