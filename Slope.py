@@ -5,10 +5,21 @@ import numpy as np
 
 
 def parseFunc(func, x, y):
-    return eval(func, {}, {"x": x, "y": y, "sin": np.sin, "cos": np.cos, "e": np.e})
+    return eval(func, {}, {
+        "x": x,
+        "y": y,
+        "e": np.e,
+        "sin": np.sin,
+        "cos": np.cos,
+        "tan": np.tan,
+        "arcsin": np.arcsin,
+        "arccos": np.arccos,
+        "arctan": np.arctan,
+        "pi": np.pi
+    })
 
 
-def slopeField(func, xmin, xmax, ymin, ymax, density=1):
+def slopeField(func, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength=None):
 
     x = np.arange(xmin, xmax, 1/density)
     y = np.arange(ymin, ymax, 1/density)
@@ -25,15 +36,16 @@ def slopeField(func, xmin, xmax, ymin, ymax, density=1):
         slopes = func(X, Y)
     U = (1 / (1 + slopes ** 2) ** 0.5) * np.ones(X.shape)
     V = (1 / (1 + slopes ** 2) ** 0.5) * slopes
-    plt.figure()
+    plt.figure() #no clue
     plt.title("Slope Field Generator")
     plt.xlabel("X")
     plt.ylabel("Y")
-    Q = plt.quiver(X, Y, U, V, headlength=0, headwidth=1, color='deepskyblue')
+    scale = 50/lineLength if lineLength is not None else None
+    Q = plt.quiver(X, Y, U, V, headlength=0, headwidth=1, color='deepskyblue', scale=scale)
     plt.grid(True)
 
 
-def solutionCurve(func, xinit, yinit, xmin, xmax, ymin, ymax):
+def solutionCurve(func, xinit, yinit, xmin=-10, xmax=10, ymin=-10, ymax=10):
     xstep, ystep = (xinit, yinit)
     X = []
     Y = []
