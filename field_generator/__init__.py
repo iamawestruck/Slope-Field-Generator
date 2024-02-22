@@ -19,7 +19,7 @@ def parseFunc(func, x, y):
     })
 
 
-def slopeField(func, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength=None):
+def slopeField(func, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength=None, figureNumber=None):
     np.seterr(divide='ignore', invalid='ignore')
     x = np.arange(xmin, xmax, 1/density)
     y = np.arange(ymin, ymax, 1/density)
@@ -36,15 +36,18 @@ def slopeField(func, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength
         slopes = func(X, Y)
     U = (1 / (1 + slopes ** 2) ** 0.5) * np.ones(X.shape)
     V = (1 / (1 + slopes ** 2) ** 0.5) * slopes
-    plt.figure() #no clue
+
+    fig = plt.figure(num=figureNumber)
     plt.title("Slope Field Generator")
     plt.xlabel("X")
     plt.ylabel("Y")
     scale = 50/lineLength if lineLength is not None else None
     Q = plt.quiver(X, Y, U, V, headlength=0, headwidth=1, color='deepskyblue', scale=scale)
     plt.grid(True)
+    return fig
 
-def vectorField(partialOne, partialTwo, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength=None):
+
+def vectorField(partialOne, partialTwo, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength=None, figureNumber=None):
     np.seterr(divide='ignore', invalid='ignore')
     x = np.arange(xmin, xmax, 1/density)
     y = np.arange(ymin, ymax, 1/density)
@@ -64,13 +67,17 @@ def vectorField(partialOne, partialTwo, xmin=-10, xmax=10, ymin=-10, ymax=10, de
     else:
         V = partialTwo(X, Y)
 
+    fig = plt.figure(num=figureNumber)
     plt.title("Vector Field Generator")
     plt.xlabel("X")
     plt.ylabel("Y")
     scale = 50/lineLength if lineLength is not None else None
     Q = plt.quiver(X, Y, U, V, headwidth=5, color='deepskyblue', scale=scale)
     plt.grid(True)
-def solutionCurve(func, xinit, yinit, xmin=-10, xmax=10, ymin=-10, ymax=10):
+    return fig
+
+
+def solutionCurve(func, xinit, yinit, xmin=-10, xmax=10, ymin=-10, ymax=10, figureNumber=None):
     xstep, ystep = (xinit, yinit)
     X = []
     Y = []
@@ -101,17 +108,10 @@ def solutionCurve(func, xinit, yinit, xmin=-10, xmax=10, ymin=-10, ymax=10):
             break
     X = np.array(X)
     Y = np.array(Y)
+    fig = plt.figure(num=figureNumber)
     plt.plot(X, Y)
     plt.grid(True)
+    return fig
 
-
-
-def f(x, y):
-    return x
-
-g = "y"
-
-# slopeField(g, -10, 10, -10, 10, 1)
-vectorField(f, g, -10, 10, -10, 10, 1)
-solutionCurve(g, -3, 1, -10, 10, -10, 10)
-plt.show()
+def show():
+    plt.show()
