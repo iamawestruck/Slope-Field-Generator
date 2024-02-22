@@ -44,7 +44,32 @@ def slopeField(func, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength
     Q = plt.quiver(X, Y, U, V, headlength=0, headwidth=1, color='deepskyblue', scale=scale)
     plt.grid(True)
 
+def vectorField(partialOne, partialTwo, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength=None):
+    np.seterr(divide='ignore', invalid='ignore')
+    x = np.arange(xmin, xmax, 1/density)
+    y = np.arange(ymin, ymax, 1/density)
+    X, Y = np.meshgrid(x, y)
 
+    if not (type(partialOne) is str or hasattr(partialOne, '__call__')):
+        raise Exception("L, bad argument")
+    if type(partialOne) is str:
+        U = parseFunc(partialOne, X, Y)
+    else:
+        U = partialOne(X, Y)
+
+    if not (type(partialTwo) is str or hasattr(partialTwo, '__call__')):
+        raise Exception("L, bad argument")
+    if type(partialTwo) is str:
+        V = parseFunc(partialTwo, X, Y)
+    else:
+        V = partialTwo(X, Y)
+
+    plt.title("Vector Field Generator")
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    scale = 50/lineLength if lineLength is not None else None
+    Q = plt.quiver(X, Y, U, V, headwidth=5, color='deepskyblue', scale=scale)
+    plt.grid(True)
 def solutionCurve(func, xinit, yinit, xmin=-10, xmax=10, ymin=-10, ymax=10):
     xstep, ystep = (xinit, yinit)
     X = []
@@ -82,10 +107,11 @@ def solutionCurve(func, xinit, yinit, xmin=-10, xmax=10, ymin=-10, ymax=10):
 
 
 def f(x, y):
-    return np.e-np.sin(y-x)
+    return x
 
-g = "sin(x) + e**(1/y)"
+g = "y"
 
-slopeField(g, -10, 10, -10, 10, 1)
+# slopeField(g, -10, 10, -10, 10, 1)
+vectorField(f, g, -10, 10, -10, 10, 1)
 solutionCurve(g, -3, 1, -10, 10, -10, 10)
 plt.show()
