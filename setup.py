@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.1",
     author="EQIKE",
     author_email="lc20-0098@lclark.edu",
-    packages=["field-generator"],
+    packages=["field_generator"],
     description="A simple slope field generator",
     long_description=description,
     long_description_content_type="text/markdown",
