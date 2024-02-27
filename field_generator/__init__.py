@@ -1,10 +1,11 @@
 import math
+import numbers
 
 from matplotlib import pyplot as plt
 import numpy as np
 
 
-def parseFunc(func, x, y):
+def _parseFunc(func, x, y):
     return eval(func, {}, {
         "x": x,
         "y": y,
@@ -31,7 +32,7 @@ def slopeField(func, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength
     if not (type(func) is str or hasattr(func, '__call__')):
         raise Exception("L, bad argument")
     if type(func) is str:
-        slopes = parseFunc(func, X, Y)
+        slopes = _parseFunc(func, X, Y)
     else:
         slopes = func(X, Y)
     U = (1 / (1 + slopes ** 2) ** 0.5) * np.ones(X.shape)
@@ -56,14 +57,14 @@ def vectorField(partialOne, partialTwo, xmin=-10, xmax=10, ymin=-10, ymax=10, de
     if not (type(partialOne) is str or hasattr(partialOne, '__call__')):
         raise Exception("L, bad argument")
     if type(partialOne) is str:
-        U = parseFunc(partialOne, X, Y)
+        U = _parseFunc(partialOne, X, Y)
     else:
         U = partialOne(X, Y)
 
     if not (type(partialTwo) is str or hasattr(partialTwo, '__call__')):
         raise Exception("L, bad argument")
     if type(partialTwo) is str:
-        V = parseFunc(partialTwo, X, Y)
+        V = _parseFunc(partialTwo, X, Y)
     else:
         V = partialTwo(X, Y)
 
@@ -84,26 +85,32 @@ def solutionCurve(func, xinit, yinit, xmin=-10, xmax=10, ymin=-10, ymax=10, figu
     if not (type(func) is str or hasattr(func, '__call__')):
         raise Exception("L, bad argument")
 
-    for i in range(10000):
+    for i in range(2000000):
         X.append(xstep)
         Y.append(ystep)
-        if type(func) is str:
-            slope = parseFunc(func, xstep, ystep)
-        else:
-            slope = func(xstep, ystep)
-        ystep += slope * 0.01
-        xstep += 0.01
+        try:
+            if type(func) is str:
+                slope = _parseFunc(func, xstep, ystep)
+            else:
+                slope = func(xstep, ystep)
+        except ZeroDivisionError:
+            break
+        ystep += slope * 0.0005
+        xstep += 0.0005
         if xstep > xmax or xstep < xmin or ystep > ymax or ystep < ymin:
             break
-    for i in range(10000):
+    for i in range(2000000):
         X.append(xstep)
         Y.append(ystep)
-        if type(func) is str:
-            slope = parseFunc(func, xstep, ystep)
-        else:
-            slope = func(xstep, ystep)
-        ystep -= slope * 0.01
-        xstep -= 0.01
+        try:
+            if type(func) is str:
+                slope = _parseFunc(func, xstep, ystep)
+            else:
+                slope = func(xstep, ystep)
+        except ZeroDivisionError:
+            break
+        ystep -= slope * 0.0005
+        xstep -= 0.0005
         if xstep > xmax or xstep < xmin or ystep > ymax or ystep < ymin:
             break
     X = np.array(X)
@@ -115,3 +122,7 @@ def solutionCurve(func, xinit, yinit, xmin=-10, xmax=10, ymin=-10, ymax=10, figu
 
 def show():
     plt.show()
+
+fig = slopeField(lambda x,y: 1/x * x**2)
+solutionCurve(lambda x,y: 1/x * x**2, 2,1, figureNumber=fig)
+show()
