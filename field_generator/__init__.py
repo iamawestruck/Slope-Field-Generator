@@ -1,5 +1,6 @@
 import math
 import numbers
+from scipy.integrate import solve_ivp
 
 from matplotlib import pyplot as plt
 import numpy as np
@@ -22,8 +23,8 @@ def _parseFunc(func, x, y):
 
 def slopeField(func, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength=None, figureNumber=None):
     np.seterr(divide='ignore', invalid='ignore')
-    x = np.arange(xmin, xmax, 1/density)
-    y = np.arange(ymin, ymax, 1/density)
+    x = np.linspace(xmin, xmax, density * 20)
+    y = np.linspace(ymin, ymax, density * 20)
     X, Y = np.meshgrid(x, y)
     # if hasattr(func, '__call__'):
     #     slopes = func(X, Y)
@@ -50,8 +51,8 @@ def slopeField(func, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength
 
 def vectorField(partialOne, partialTwo, xmin=-10, xmax=10, ymin=-10, ymax=10, density=1, lineLength=None, figureNumber=None):
     np.seterr(divide='ignore', invalid='ignore')
-    x = np.arange(xmin, xmax, 1/density)
-    y = np.arange(ymin, ymax, 1/density)
+    x = np.linspace(xmin, xmax, density*20)
+    y = np.linspace(ymin, ymax, density*20)
     X, Y = np.meshgrid(x, y)
 
     if not (type(partialOne) is str or hasattr(partialOne, '__call__')):
@@ -120,9 +121,51 @@ def solutionCurve(func, xinit, yinit, xmin=-10, xmax=10, ymin=-10, ymax=10, figu
     plt.grid(True)
     return fig
 
+def parametricCurve(xfunc, yfunc, xinit, yinit, tmax = 50, figureNumber = None, sharedTimeGraphs = True):
+    times = np.linspace(0, tmax, 500)
+    if not (type(xfunc) is str or hasattr(xfunc, '__call__')):
+        raise Exception("L, bad argument")
+    if type(xfunc) is str:
+        xlambda = lambda x, y: _parseFunc(xfunc, x, y)
+    else:
+        xlambda = lambda x, y: xfunc(x, y)
+
+    if not (type(yfunc) is str or hasattr(yfunc, '__call__')):
+        raise Exception("L, bad argument")
+    if type(yfunc) is str:
+        ylambda = lambda x, y: _parseFunc(yfunc, x, y)
+    else:
+        ylambda = lambda x, y: yfunc(x, y)
+
+    solution = solve_ivp(lambda t, vars: [xlambda(vars[0], vars[1]), ylambda(vars[0], vars[1])], [0, tmax], [xinit, yinit], t_eval=times)
+    figures = []
+    figures.append(plt.figure(figureNumber))
+    plt.plot(solution.y[0], solution.y[1])
+    if sharedTimeGraphs:
+        figures.append(plt.figure())
+        plt.title("Parametric Curves in Terms of t")
+        plt.plot(solution.t, solution.y[0], label= "x(t)")
+        plt.plot(solution.t, solution.y[1], label="y(t)")
+        plt.xlabel("Time")
+    else:
+        figures.append(plt.figure())
+        plt.title("x in Terms of Time")
+        plt.plot(solution.t, solution.y[0], label="x(t)")
+        plt.xlabel("Time")
+        plt.ylabel("x")
+        figures.append(plt.figure())
+        plt.title("y in Terms of Time")
+        plt.plot(solution.t, solution.y[1], label="y(t)")
+        plt.xlabel("Time")
+        plt.ylabel("y")
+    return figures
+
+
 def show():
     plt.show()
 
-fig = slopeField(lambda x,y: 1/x * x**2)
-solutionCurve(lambda x,y: 1/x * x**2, 2,1, figureNumber=fig)
+# fig = slopeField(lambda x,y: 1/x * x**2)
+# solutionCurve(lambda x,y: 1/x * x**2, 2,1, figureNumber=fig)
+figure = vectorField(lambda x,y: x - 2*x*y, lambda x,y: -1/2*y + 1/4*x*y, xmin= 0, ymin=0, xmax= 6, ymax=2)
+parametricCurve(lambda x,y: x - 2*x*y, lambda x,y: -1/2*y + 1/4*x*y, 1,1, figureNumber= figure, sharedTimeGraphs=False)
 show()
