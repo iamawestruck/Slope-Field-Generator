@@ -220,11 +220,3 @@ def parametricCurve(xfunc, yfunc, xinit, yinit, tmax=50, figureNumber=None, shar
 def show():
     plt.show()
 
-
-# fig = slopeField(lambda x,y: 1/x * x**2)
-# solutionCurve(lambda x,y: 1/x * x**2, 2,1, figureNumber=fig)
-figure = vectorField(lambda x, y: x - 2 * x * y, lambda x, y: -1 / 2 * y + 1 / 4 * x * y, xmin=0, ymin=0, xmax=6,
-                     ymax=2)
-parametricCurve(lambda x, y: x - 2 * x * y, lambda x, y: -1 / 2 * y + 1 / 4 * x * y, 1, 1, figureNumber=figure,
-                sharedTimeGraphs=False)
-show()

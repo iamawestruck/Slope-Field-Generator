@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="field-generator",
-    version="0.1.0",
+    version="0.1.1",
     author="EQIKE",
     author_email="lc20-0098@lclark.edu",
     packages=["field_generator"],
@@ -15,5 +15,5 @@ setuptools.setup(
     url="https://github.com/iamawestruck/Slope-Field-Generator",
     license='MIT',
     python_requires='>=3.8',
-    install_requires=["matplotlib"]
+    install_requires=["matplotlib", "scipy"]
 )
