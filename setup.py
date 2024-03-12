@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="field-generator",
-    version="0.1.1",
+    version="0.1.2",
     author="EQIKE",
     author_email="lc20-0098@lclark.edu",
     packages=["field_generator"],

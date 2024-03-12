@@ -202,6 +202,7 @@ def parametricCurve(xfunc, yfunc, xinit, yinit, tmax=50, figureNumber=None, shar
         plt.title("Parametric Curves in Terms of t")
         plt.plot(solution.t, solution.y[0], label="x(t)")
         plt.plot(solution.t, solution.y[1], label="y(t)")
+        plt.legend()
         plt.xlabel("Time")
     else:
         figures.append(plt.figure())
