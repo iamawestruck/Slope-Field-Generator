@@ -163,7 +163,7 @@ def solutionCurve(func, xinit, yinit, xmin=-10, xmax=10, ymin=-10, ymax=10, figu
     return fig
 
 
-def parametricCurve(xfunc, yfunc, xinit, yinit, tmax=50, figureNumber=None, sharedTimeGraphs=True):
+def parametricCurve(xfunc, yfunc, xinit, yinit, tmax=50, xmin=-10, xmax=10, ymin=-10, ymax=10, figureNumber=None, sharedTimeGraphs=True):
     """
     Generates a parametric curve plot for a system of DFQs.
 
@@ -197,6 +197,8 @@ def parametricCurve(xfunc, yfunc, xinit, yinit, tmax=50, figureNumber=None, shar
     figures = []
     figures.append(plt.figure(figureNumber))
     plt.plot(solution.y[0], solution.y[1])
+    plt.xlim(xmin, xmax)
+    plt.ylim(ymin, ymax)
     if sharedTimeGraphs:
         figures.append(plt.figure())
         plt.title("Parametric Curves in Terms of t")
